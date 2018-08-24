@@ -1,5 +1,17 @@
 import numpy
 import scipy
+from scipy.spatial.distance import pdist, squareform
+
+
+def pairwise_dist(data, dist, p=None):
+    if not isinstance(dist, str):
+        raise ValueError('dist must be str')
+    
+    if dist == 'l2':
+        return squareform(pdist(data, metric='euclidean'))
+    elif dist == 'lp':
+        return squareform(pdist(data, metric='minkowski', p=p))
+
 
 def pairwise_dist_generic(data, distfunc):
     n = data.shape[0]
