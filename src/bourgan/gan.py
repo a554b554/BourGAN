@@ -36,7 +36,8 @@ class BourGAN(object):
 
         #init network
         dim_outout = self.dataset.out_dim
-        self.z_sampler, self.scale_factor, self.z_dim = BourgainSampler(self.dataset.data)
+        self.z_sampler = BourgainSampler(self.dataset.data)
+        self.scale_factor, self.z_dim = self.z_sampler.scale, self.z_sampler.embedded_data.shape[1]
 
         self.G = DeepMLPG(self.z_dim, 128, self.dataset.out_dim)
         self.D = DeepMLPD(self.dataset.out_dim, 128, 1)
