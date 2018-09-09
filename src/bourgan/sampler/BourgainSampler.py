@@ -26,3 +26,4 @@ class BourgainSampler(object):
         return sampled_data
 
     # def compute_bourgan_scale()
+    

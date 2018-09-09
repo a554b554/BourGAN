@@ -17,7 +17,8 @@ class BourGAN(object):
         self.dataset = gaussianGridDataset(5, 50, 0.01)
         self.dataloader = DataLoader(self.dataset, batch_size=self.batch_size, shuffle=True)
         self.use_gpu =True
-        
+    
+
         #frequency for alternating gan
         self.g_step = 1
         self.d_step = 1
