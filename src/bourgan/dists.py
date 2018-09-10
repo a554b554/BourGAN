@@ -1,7 +1,7 @@
 import numpy
 import scipy
 from scipy.spatial.distance import pdist, squareform
-
+import torch
 
 def pairwise_dist(data, dist, p=None):
     if not isinstance(dist, str):
@@ -27,3 +27,12 @@ def pairwise_dist_generic(data, distfunc):
     return
 
     
+def dist_l2(a, b):
+    a = a.view((a.shape[0], -1))
+    b = b.view((b.shape[0], -1))
+    return torch.norm(a-b, p=2, dim=1)
+
+def dist_l1(a, b):
+    a = a.view((a.shape[0], -1))
+    b = b.view((b.shape[0], -1))
+    return torch.norm(a-b, p=1, dim=1)

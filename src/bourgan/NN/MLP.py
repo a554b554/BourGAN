@@ -1,6 +1,6 @@
-import torch
 import torch.nn as nn
-
+import torch.nn.functional as F
+import torch
 
 class DeepMLP_G(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
@@ -24,4 +24,4 @@ class DeepMLP_D(nn.Module):
     def forward(self, x):
         x = F.leaky_relu(self.map1(x), 0.1)
         x = F.leaky_relu(self.map2(x), 0.1)
-        return F.sigmoid(self.map3(x))
+        return torch.sigmoid(self.map3(x))
