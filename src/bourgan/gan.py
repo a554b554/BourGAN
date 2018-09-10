@@ -2,22 +2,23 @@
 import torch
 import torch.nn
 from torch.utils.data import DataLoader
+from torch import optim
 
 from bourgan.datasets.gaussianGridDatasetDataset import gaussianGridDataset
 from bourgan.sampler.BourgainSampler import BourgainSampler
-
+from bourgan.NN.MLP import *
 
 class BourGAN(object):
     def __init__(self):
         self.epoch = 2000
         self.batch_size = 128
-
         self.alpha = 0.1
 
+    
         self.dataset = gaussianGridDataset(5, 50, 0.01)
+        
         self.dataloader = DataLoader(self.dataset, batch_size=self.batch_size, shuffle=True)
         self.use_gpu =True
-    
 
         #frequency for alternating gan
         self.g_step = 1
@@ -34,21 +35,24 @@ class BourGAN(object):
 
         self.show_step = 100
 
+
         #init network
         dim_outout = self.dataset.out_dim
         self.z_sampler = BourgainSampler(self.dataset.data)
         self.scale_factor, self.z_dim = self.z_sampler.scale, self.z_sampler.embedded_data.shape[1]
 
-        self.G = DeepMLPG(self.z_dim, 128, self.dataset.out_dim)
-        self.D = DeepMLPD(self.dataset.out_dim, 128, 1)
 
+        self.G = DeepMLP_G(self.z_dim, 128, self.dataset.out_dim)
+        self.D = DeepMLP_D(self.dataset.out_dim, 128, 1)
 
+        print("1")
         self.G_opt = optim.Adam(self.G.parameters(), lr=1e-3, betas=(0.5, 0.999))
         self.D_opt = optim.Adam(self.D.parameters(), lr=1e-3, betas=(0.5, 0.999))
         
         self.criterion = nn.BCELoss()
         self.criterion_mse = nn.MSELoss()
 
+        print("2")
         if self.use_gpu:
             print('using gpu!!')
             self.G.cuda()

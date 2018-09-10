@@ -19,7 +19,7 @@ class BourgainSampler(object):
         distmat = pairwise_dist(data, dist=dist)
         self.embedded_data = bourgain_embedding(data, p=p, m=m, distmat=distmat)
         self.scale = float(self.get_scale(self.embedded_data, distmat))
-        print('scale factor:', scale_factor)
+        print('scale factor:', self.scale)
 
         
     def sampling(self, n):   #bourgain sampling
@@ -31,10 +31,7 @@ class BourgainSampler(object):
         sampled_data = torch.from_numpy(sampled_data).float()
         return sampled_data
 
-<<<<<<< HEAD
-    # def compute_bourgan_scale()
-    
-=======
+
     def get_scale(self, embedded_data, distmat):
         l2 = pairwise_dist(embedded_data, 'l2')
         for i in range(l2.shape[0]):
@@ -42,5 +39,3 @@ class BourgainSampler(object):
         div1 = np.sqrt(np.divide(distmat, l2))
         return np.max(div1)
 
-    # def compute_bourgan_scale()
->>>>>>> 6d2eb793984302a1f2d0a526c3c54f405859d9b3
