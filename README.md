@@ -11,8 +11,11 @@ Chang Xiao, Peilin Zhong, and Changxi Zheng. "BourGAN: Generative Networks with 
 
 ## Requirements
 pytorch 0.4.1
+
 numpy 1.14.3
+
 scipy 1.1.0
+
 matplotlib 2.2.3
 
 #
