@@ -7,5 +7,13 @@ This paper addresses the mode collapse for generative adversarial networks (GANs
 
 ## Publication  
 Chang Xiao, Peilin Zhong, and Changxi Zheng. "BourGAN: Generative Networks with Metric Embeddings." Neural Information processing systems (NIPS), 2018. [PDF](https://arxiv.org/abs/1805.07674)
+
+
+## Requirements
+pytorch 0.4.1
+numpy 1.14.3
+scipy 1.1.0
+matplotlib 2.2.3
+
 #
 The repo is still under development and will update frequently.
