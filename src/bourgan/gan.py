@@ -4,7 +4,7 @@ import torch.nn
 from torch.utils.data import DataLoader
 from torch import optim
 
-from bourgan.datasets.gaussianGridDatasetDataset import gaussianGridDataset
+from bourgan.datasets.gaussianGridDataset import gaussianGridDataset
 from bourgan.sampler.BourgainSampler import BourgainSampler
 from bourgan.NN.MLP import *
 from bourgan.dists import *
@@ -60,6 +60,9 @@ class BourGAN(object):
         self.zdist = dist_l2 
         self.gdist = dist_l2
 
+    # def __init__(self, config):
+    #     self.epoch = config['epoch']
+    #     # self.batch_size
 
    
 
