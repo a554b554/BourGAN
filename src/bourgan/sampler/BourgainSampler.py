@@ -1,10 +1,14 @@
 from bourgan.embed import *
 from bourgan.dists import *
 import torch
-
+import numpy as np
 
 class BourgainSampler(object):
-    def __init__(self, data, dist='l2'):
+    def __init__(self, data, path=None, dist='l2'):
+        if path is not None:
+            self.load(path)
+            return
+
         self.name = "bourgain"
         p = 0.5
         m = 5
@@ -35,3 +39,42 @@ class BourgainSampler(object):
         div1 = np.sqrt(np.divide(distmat, l2))
         return np.max(div1)
 
+    def save(self, path):
+        np.savez(path, eps=self.eps, embed=self.embedded_data, scale=self.scale, origin_data=self.origin_data)
+
+    def load(self, path):
+        ff = np.load(path)
+        self.embedded_data = ff['embed']
+        self.eps = ff['eps']
+        self.scale = ff['scale']
+        self.origin_data = ff['origin_data']
+        self.name = "bourgain"
+
+
+class UniformSampler(object):
+    def __init__(self, dim):
+        self.dim = dim
+        self.name = "uniform"
+    
+    def sampling(self, n):
+        return torch.rand(n, self.dim)
+
+class GaussianSampler(object):
+    def __init__(self, dim):
+        self.dim = dim
+        self.name = "gaussian"
+    
+    def sampling(self, n):
+        return torch.randn(n, self.dim)
+
+
+def loadSampler(sampler_config, data=None):
+    sampler_name = sampler_config['name']
+    if sampler_name == "uniform":
+        return UniformSampler(sampler_config['dim'])
+    elif sampler_name == "gaussian":
+        return GaussianSampler(sampler_config['dim'])
+    elif sampler_name == "bourgan":
+        return BourgainSampler(data=data, path=sampler_config['path'], dist=sampler_config['dist'])
+    else:
+        raise ValueError("no such sampler called "+sampler_name)
