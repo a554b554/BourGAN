@@ -68,13 +68,13 @@ class GaussianSampler(object):
         return torch.randn(n, self.dim)
 
 
-def loadSampler(sampler_config, data=None):
+def loadSampler(sampler_config, dataset=None):
     sampler_name = sampler_config['name']
     if sampler_name == "uniform":
         return UniformSampler(sampler_config['dim'])
     elif sampler_name == "gaussian":
         return GaussianSampler(sampler_config['dim'])
-    elif sampler_name == "bourgan":
-        return BourgainSampler(data=data, path=sampler_config['path'], dist=sampler_config['dist'])
+    elif sampler_name == "bourgain":
+        return BourgainSampler(data=dataset.data, path=sampler_config['path'], dist=sampler_config['dist'])
     else:
         raise ValueError("no such sampler called "+sampler_name)
