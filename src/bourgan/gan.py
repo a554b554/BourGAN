@@ -1,23 +1,60 @@
 #gan class
 import torch
-import torch.nn
+import torch.nn as nn
 from torch.utils.data import DataLoader
 from torch import optim
 
-from bourgan.datasets.gaussianGridDataset import gaussianGridDataset
+from bourgan.datasets.loadDataset import getDataset
+from bourgan.sampler.BourgainSampler import loadSampler
 from bourgan.sampler.BourgainSampler import BourgainSampler
-from bourgan.NN.MLP import *
-from bourgan.dists import *
+from bourgan.NN.NNLoader import loadNN, loadOpt
+from bourgan.dists import loadDist
 from bourgan.visualizer import *
 
+
+"""
+config format:
+
+
+epoch: int
+batch_size: int
+alpha: float
+scale_factor: float
+z_dim: int
+
+dataset: dict
+use_gpu: bool
+g_step: int
+d_step: int
+show_step: int
+
+z_sampler: dict
+
+nn_config_G: dict
+nn_config_D: dict
+
+opt_config_G: dict
+opt_config_D: dict
+
+z_dist: dict
+g_dist: dict
+"""
+
+
 class BourGAN(object):
-    def __init__(self):
+    def default_init(self):
         self.epoch = 5000
         self.batch_size = 128
         self.alpha = 0.1
 
-    
-        self.dataset = gaussianGridDataset(5, 50, 0.01)
+        dataset_config = {
+            "name":"gaussian_grid",
+            "n":5,
+            "n_data":50,
+            "sig":0.01
+        }
+        self.dataset = getDataset(dataset_config)
+        # self.dataset = gaussianGridDataset(5, 50, 0.01)
         
         self.dataloader = DataLoader(self.dataset, batch_size=self.batch_size, shuffle=True)
         self.use_gpu =True
@@ -38,12 +75,10 @@ class BourGAN(object):
         self.show_step = 100
 
 
-        #init network
-        dim_outout = self.dataset.out_dim
         self.z_sampler = BourgainSampler(self.dataset.data)
         self.scale_factor, self.z_dim = self.z_sampler.scale, self.z_sampler.embedded_data.shape[1]
 
-
+        #init network
         self.G = DeepMLP_G(self.z_dim, 128, self.dataset.out_dim)
         self.D = DeepMLP_D(self.dataset.out_dim, 128, 1)
 
@@ -60,11 +95,68 @@ class BourGAN(object):
         self.zdist = dist_l2 
         self.gdist = dist_l2
 
-    # def __init__(self, config):
-    #     self.epoch = config['epoch']
-    #     # self.batch_size
+    def __init__(self, config=None):
+        if config is None:
+            self.default_init()
+            return
+        self.epoch = config['epoch']
+        self.batch_size = config['batch_size']
+        self.alpha = config['alpha']
+        self.scale_factor = config['scale_factor']
+        # self.z_dim = config['z_dim']
 
-   
+        #load dataset
+        self.dataset = getDataset(config['dataset'])
+        self.dataloader = DataLoader(self.dataset, batch_size=self.batch_size, shuffle=True)
+        self.use_gpu = config['use_gpu']
+        self.g_step = config['g_step']
+        self.d_step = config['d_step']
+        self.show_step = config['show_step']
+
+
+        self.train_hist = {}
+        self.train_hist['D_loss'] = []
+        self.train_hist['G_loss'] = []
+        self.train_hist['dist_loss'] = []
+        self.g_dists=[]
+        self.z_dists=[]
+        self.device = torch.device("cuda:0" if self.use_gpu and torch.cuda.is_available() else "cpu")
+ 
+    
+        #load sampler
+        self.z_sampler = loadSampler(config['sampler'], dataset=self.dataset)
+        if self.z_sampler.name == "bourgain":
+            self.scale_factor, self.z_dim = self.z_sampler.scale, self.z_sampler.embedded_data.shape[1]
+        else:
+            self.z_dim = config['sampler']['dim']
+        
+        #load netowork
+        self.G = loadNN(config['nn_config_G'], input_size=self.z_dim, output_size=self.dataset.out_dim)
+        self.D = loadNN(config['nn_config_D'], input_size=self.dataset.out_dim, output_size=1)
+
+        #load optimizer
+        self.G_opt = loadOpt(self.G.parameters(), config['opt_config_G'])
+        self.D_opt = loadOpt(self.D.parameters(), config['opt_config_D'])
+
+        #load criterion
+        self.criterion = nn.BCELoss()
+        self.criterion_mse = nn.MSELoss()
+
+        #load dist
+        self.zdist = loadDist(config['zdist'])
+        self.gdist = loadDist(config['gdist'])
+
+        #convert device
+        self.G.to(self.device)
+        self.D.to(self.device)
+
+        
+        
+
+        
+
+
+
 
     def train(self, iters=0):
         print('training start')

@@ -16,7 +16,7 @@ class gaussianGridDataset(Dataset):
 
         self.out_dim = 2
         self.n_data = self.data.shape[0]
-
+        self.name = "gaussian_grid"
     
     def __getitem__(self, index):
         return self.data[index, :]

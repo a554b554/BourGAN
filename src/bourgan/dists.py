@@ -36,3 +36,13 @@ def dist_l1(a, b):
     a = a.view((a.shape[0], -1))
     b = b.view((b.shape[0], -1))
     return torch.norm(a-b, p=1, dim=1)
+
+
+def loadDist(dist_config):
+    dist_name = dist_config['name']
+    if dist_name == 'l2':
+        return dist_l2
+    elif dist_name == 'l1':
+        return dist_l1
+    else:
+        raise ValueError("no dist called "+dist_name)

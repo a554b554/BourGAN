@@ -8,6 +8,7 @@ class DeepMLP_G(nn.Module):
         self.map1 = nn.Linear(input_size, hidden_size)
         self.map2 = nn.Linear(hidden_size, hidden_size)
         self.map3 = nn.Linear(hidden_size, output_size)
+        self.name = "DeepMLP_G"
 
     def forward(self, x):
         x = F.leaky_relu(self.map1(x), 0.1)
@@ -20,6 +21,7 @@ class DeepMLP_D(nn.Module):
         self.map1 = nn.Linear(input_size, hidden_size)
         self.map2 = nn.Linear(hidden_size, hidden_size)
         self.map3 = nn.Linear(hidden_size, output_size)
+        self.name = "DeepMLP_D"
 
     def forward(self, x):
         x = F.leaky_relu(self.map1(x), 0.1)
