@@ -14,7 +14,7 @@ Chang Xiao, Peilin Zhong, and Changxi Zheng. "BourGAN: Generative Networks with 
 @article{xiao2018bourgan,
   title={BourGAN: Generative Networks with Metric Embeddings},
   author={Xiao, Chang and Zhong, Peilin and Zheng, Changxi},
-  journal={arXiv preprint arXiv:1805.07674},
+  journal={Advances in Neural Information Processing Systems},
   year={2018}
 }
 ```
