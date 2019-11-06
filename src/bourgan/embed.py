@@ -58,11 +58,8 @@ def mindist(x_id, idxset, distmat):
     Returns:
         mindist (float): minimal distance
     """
-    mindist = np.inf
-    for y_id in idxset[0]:
-        d = distmat[x_id, y_id]
-        if d < mindist:
-            mindist = d
-    if mindist == np.inf:
-        mindist = 0
-    return mindist
+    d = distmat[x_id, idxset[0]]
+    if d.shape[0] == 0:
+        return 0
+    else:
+        return np.min(d)
